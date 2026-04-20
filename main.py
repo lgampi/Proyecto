@@ -92,13 +92,13 @@ class CerraduraInteligente(DispositivoSeguridad):
     def bloquear(self) -> str:
         """Bloquea la cerradura."""
         self.cambiar_estado(ESTADO_BLOQUEADO)
-        return f"✓ {self.nombre} ha sido bloqueada."
+        return f"[OK] {self.nombre} ha sido bloqueada."
     
     def desbloquear(self) -> str:
         """Desbloquea la cerradura."""
         self.cambiar_estado(ESTADO_DESBLOQUEADO)
         self.intentos_fallidos = 0
-        return f"✓ {self.nombre} ha sido desbloqueada."
+        return f"[OK] {self.nombre} ha sido desbloqueada."
 
 
 class CamaraIP(DispositivoSeguridad):
@@ -113,13 +113,13 @@ class CamaraIP(DispositivoSeguridad):
     def activar(self) -> str:
         """Activa la cámara."""
         self.cambiar_estado(ESTADO_ACTIVO)
-        return f"✓ {self.nombre} ha sido activada."
+        return f"[OK] {self.nombre} ha sido activada."
     
     def desactivar(self) -> str:
         """Desactiva la cámara."""
         self.cambiar_estado(ESTADO_INACTIVO)
         self.movimiento_detectado = False
-        return f"✓ {self.nombre} ha sido desactivada."
+        return f"[OK] {self.nombre} ha sido desactivada."
     
     def simular_deteccion_movimiento(self) -> Optional[str]:
         """Simula detección de movimiento de forma aleatoria."""
@@ -127,7 +127,7 @@ class CamaraIP(DispositivoSeguridad):
             probabilidad = randint(1, 100)
             if probabilidad > 70:  # 30% de probabilidad
                 self.movimiento_detectado = True
-                return f"⚠ MOVIMIENTO DETECTADO en {self.nombre}"
+                return f"[WARNING] MOVIMIENTO DETECTADO en {self.nombre}"
         return None
 
 
@@ -141,12 +141,12 @@ class SensorPuertaVentana(DispositivoSeguridad):
     def abrir(self) -> str:
         """Simula apertura de puerta/ventana."""
         self.cambiar_estado(ESTADO_ABIERTO)
-        return f"⚠ {self.nombre} está ABIERTA."
+        return f"[WARNING] {self.nombre} está ABIERTA."
     
     def cerrar(self) -> str:
         """Simula cierre de puerta/ventana."""
         self.cambiar_estado(ESTADO_CERRADO)
-        return f"✓ {self.nombre} está CERRADA."
+        return f"[OK] {self.nombre} está CERRADA."
 
 
 class DetectorHumo(DispositivoSeguridad):
@@ -161,13 +161,13 @@ class DetectorHumo(DispositivoSeguridad):
         probabilidad = randint(1, 100)
         if probabilidad > 97:  # 3% de probabilidad
             self.cambiar_estado(ESTADO_ALERTA)
-            return f"🔴 ALERTA: Humo detectado en {self.nombre}"
+            return f"[ALERT] ALERTA: Humo detectado en {self.nombre}"
         return None
     
     def resetear(self) -> str:
         """Resetea el detector después de una alerta."""
         self.cambiar_estado(ESTADO_INACTIVO)
-        return f"✓ {self.nombre} ha sido reseteado."
+        return f"[OK] {self.nombre} ha sido reseteado."
 
 
 class DetectorMonoxidoCarbono(DispositivoSeguridad):
@@ -182,13 +182,13 @@ class DetectorMonoxidoCarbono(DispositivoSeguridad):
         probabilidad = randint(1, 100)
         if probabilidad > 98:  # 2% de probabilidad
             self.cambiar_estado(ESTADO_ALERTA)
-            return f"🔴 ALERTA: Monóxido de Carbono detectado en {self.nombre}"
+            return f"[ALERT] ALERTA: Monóxido de Carbono detectado en {self.nombre}"
         return None
     
     def resetear(self) -> str:
         """Resetea el detector después de una alerta."""
         self.cambiar_estado(ESTADO_INACTIVO)
-        return f"✓ {self.nombre} ha sido reseteado."
+        return f"[OK] {self.nombre} ha sido reseteado."
 
 
 class AlarmaInteligente(DispositivoSeguridad):
@@ -202,19 +202,19 @@ class AlarmaInteligente(DispositivoSeguridad):
     def activar(self) -> str:
         """Activa la alarma."""
         self.cambiar_estado(ESTADO_ACTIVO)
-        return f"🔔 ¡¡ {self.nombre} ACTIVADA !! - Volumen: {self.volumen}%"
+        return f"[ALARM] ¡¡ {self.nombre} ACTIVADA !! - Volumen: {self.volumen}%"
     
     def desactivar(self) -> str:
         """Desactiva la alarma."""
         self.cambiar_estado(ESTADO_INACTIVO)
-        return f"✓ {self.nombre} ha sido desactivada."
+        return f"[OK] {self.nombre} ha sido desactivada."
     
     def establecer_volumen(self, volumen: int) -> str:
         """Establece el nivel de volumen."""
         if 0 <= volumen <= 100:
             self.volumen = volumen
-            return f"✓ Volumen ajustado a {volumen}%"
-        return "✗ Volumen inválido. Debe estar entre 0 y 100."
+            return f"[OK] Volumen ajustado a {volumen}%"
+        return "[ERROR] Volumen inválido. Debe estar entre 0 y 100."
 
 
 # ================================================================
@@ -263,7 +263,7 @@ class Habitacion:
         if not self.dispositivos:
             return f"  No hay dispositivos en {self.nombre}."
         
-        info = f"\n  📍 Habitación: {self.nombre} (Piso {self.piso})\n"
+        info = f"\n  [ROOM] Habitación: {self.nombre} (Piso {self.piso})\n"
         for dispositivo in self.dispositivos:
             info_disp = dispositivo.obtener_informacion()
             info += f"    • {info_disp['nombre']} ({info_disp['tipo']})\n"
@@ -309,12 +309,12 @@ class SistemaSeguridad:
         """Crea una nueva habitación."""
         # Validar que no exista una habitación con el mismo nombre
         if any(h.nombre.lower() == nombre.lower() for h in self.habitaciones):
-            return "✗ La habitación ya existe."
+            return "[ERROR] La habitación ya existe."
         
         habitacion = Habitacion(nombre, piso)
         self.habitaciones.append(habitacion)
         self._registrar_evento(f"Habitación '{nombre}' creada")
-        return f"✓ Habitación '{nombre}' creada exitosamente."
+        return f"[OK] Habitación '{nombre}' creada exitosamente."
     
     def eliminar_habitacion(self, nombre: str) -> str:
         """Elimina una habitación y todos sus dispositivos."""
@@ -322,8 +322,8 @@ class SistemaSeguridad:
             if habitacion.nombre.lower() == nombre.lower():
                 self.habitaciones.pop(i)
                 self._registrar_evento(f"Habitación '{nombre}' eliminada")
-                return f"✓ Habitación '{nombre}' eliminada."
-        return "✗ Habitación no encontrada."
+                return f"[OK] Habitación '{nombre}' eliminada."
+        return "[ERROR] Habitación no encontrada."
     
     def obtener_habitacion(self, nombre: str) -> Optional[Habitacion]:
         """Obtiene una habitación por su nombre."""
@@ -337,7 +337,7 @@ class SistemaSeguridad:
         if not self.habitaciones:
             return "No hay habitaciones creadas aún."
         
-        info = f"\n{SEPARADOR}\n📋 HABITACIONES DEL SISTEMA:\n{SEPARADOR}\n"
+        info = f"\n{SEPARADOR}\n[LIST] HABITACIONES DEL SISTEMA:\n{SEPARADOR}\n"
         for habitacion in self.habitaciones:
             info += f"• {habitacion.nombre} (Piso {habitacion.piso}) - {len(habitacion.dispositivos)} dispositivo(s)\n"
         return info
@@ -346,34 +346,34 @@ class SistemaSeguridad:
         """Agrega un dispositivo a una habitación."""
         habitacion = self.obtener_habitacion(habitacion_nombre)
         if not habitacion:
-            return "✗ Habitación no encontrada."
+            return "[ERROR] Habitación no encontrada."
         
         if habitacion.agregar_dispositivo(dispositivo):
             self._registrar_evento(f"Dispositivo '{dispositivo.nombre}' agregado a '{habitacion_nombre}'")
-            return f"✓ Dispositivo '{dispositivo.nombre}' agregado a '{habitacion_nombre}'."
-        return "✗ El dispositivo ya existe en esta habitación."
+            return f"[OK] Dispositivo '{dispositivo.nombre}' agregado a '{habitacion_nombre}'."
+        return "[ERROR] El dispositivo ya existe en esta habitación."
     
     def eliminar_dispositivo(self, habitacion_nombre: str, dispositivo_nombre: str) -> str:
         """Elimina un dispositivo de una habitación."""
         habitacion = self.obtener_habitacion(habitacion_nombre)
         if not habitacion:
-            return "✗ Habitación no encontrada."
+            return "[ERROR] Habitación no encontrada."
         
         if habitacion.eliminar_dispositivo(dispositivo_nombre):
             self._registrar_evento(f"Dispositivo '{dispositivo_nombre}' eliminado de '{habitacion_nombre}'")
-            return f"✓ Dispositivo '{dispositivo_nombre}' eliminado."
-        return "✗ Dispositivo no encontrado."
+            return f"[OK] Dispositivo '{dispositivo_nombre}' eliminado."
+        return "[ERROR] Dispositivo no encontrado."
     
     def cambiar_estado_dispositivo(self, habitacion_nombre: str, 
                                    dispositivo_nombre: str, accion: str) -> str:
         """Cambia el estado de un dispositivo específico."""
         habitacion = self.obtener_habitacion(habitacion_nombre)
         if not habitacion:
-            return "✗ Habitación no encontrada."
+            return "[ERROR] Habitación no encontrada."
         
         dispositivo = habitacion.obtener_dispositivo(dispositivo_nombre)
         if not dispositivo:
-            return "✗ Dispositivo no encontrado."
+            return "[ERROR] Dispositivo no encontrado."
         
         # Ejecutar la acción según el tipo de dispositivo
         resultado = ""
@@ -384,7 +384,7 @@ class SistemaSeguridad:
             elif accion.lower() == "desbloquear":
                 resultado = dispositivo.desbloquear()
             else:
-                return "✗ Acción no válida para cerradura. Use 'bloquear' o 'desbloquear'."
+                return "[ERROR] Acción no válida para cerradura. Use 'bloquear' o 'desbloquear'."
         
         elif isinstance(dispositivo, CamaraIP):
             if accion.lower() == "activar":
@@ -392,7 +392,7 @@ class SistemaSeguridad:
             elif accion.lower() == "desactivar":
                 resultado = dispositivo.desactivar()
             else:
-                return "✗ Acción no válida para cámara. Use 'activar' o 'desactivar'."
+                return "[ERROR] Acción no válida para cámara. Use 'activar' o 'desactivar'."
         
         elif isinstance(dispositivo, SensorPuertaVentana):
             if accion.lower() == "abrir":
@@ -400,7 +400,7 @@ class SistemaSeguridad:
             elif accion.lower() == "cerrar":
                 resultado = dispositivo.cerrar()
             else:
-                return "✗ Acción no válida para sensor. Use 'abrir' o 'cerrar'."
+                return "[ERROR] Acción no válida para sensor. Use 'abrir' o 'cerrar'."
         
         elif isinstance(dispositivo, AlarmaInteligente):
             if accion.lower() == "activar":
@@ -408,10 +408,10 @@ class SistemaSeguridad:
             elif accion.lower() == "desactivar":
                 resultado = dispositivo.desactivar()
             else:
-                return "✗ Acción no válida para alarma. Use 'activar' o 'desactivar'."
+                return "[ERROR] Acción no válida para alarma. Use 'activar' o 'desactivar'."
         
         else:
-            return "✗ Operación no soportada para este dispositivo."
+            return "[ERROR] Operación no soportada para este dispositivo."
         
         self._registrar_evento(f"Acción '{accion}' en '{dispositivo_nombre}'")
         return resultado
@@ -420,9 +420,9 @@ class SistemaSeguridad:
         """Ejecuta una escena predefinida."""
         if nombre_escena not in self.escenas_predefinidas:
             escenas_disponibles = ", ".join(self.escenas_predefinidas.keys())
-            return f"✗ Escena no encontrada. Escenas disponibles: {escenas_disponibles}"
+            return f"[ERROR] Escena no encontrada. Escenas disponibles: {escenas_disponibles}"
         
-        info = f"\n🎬 Ejecutando escena: {nombre_escena}\n"
+        info = f"\n[SCENE] Ejecutando escena: {nombre_escena}\n"
         
         for tipo_dispositivo, accion in self.escenas_predefinidas[nombre_escena]:
             info += self._ejecutar_accion_en_tipo(tipo_dispositivo, accion)
@@ -491,7 +491,7 @@ class SistemaSeguridad:
             return "No hay eventos registrados aún."
         
         eventos_mostrados = self.eventos[-cantidad:]
-        info = f"\n{SEPARADOR}\n📊 BITÁCORA DE EVENTOS (últimos {len(eventos_mostrados)}):\n{SEPARADOR}\n"
+        info = f"\n{SEPARADOR}\n[LOG] BITÁCORA DE EVENTOS (últimos {len(eventos_mostrados)}):\n{SEPARADOR}\n"
         
         for evento in eventos_mostrados:
             info += f"[{evento['timestamp']}] {evento['descripcion']}\n"
@@ -500,7 +500,7 @@ class SistemaSeguridad:
     
     def obtener_estado_general(self) -> str:
         """Obtiene el estado general del sistema."""
-        info = f"\n{SEPARADOR}\n🏠 ESTADO GENERAL DEL SISTEMA\n{SEPARADOR}\n"
+        info = f"\n{SEPARADOR}\n[HOME] ESTADO GENERAL DEL SISTEMA\n{SEPARADOR}\n"
         info += f"Habitaciones: {len(self.habitaciones)}\n"
         
         total_dispositivos = sum(len(h.dispositivos) for h in self.habitaciones)
@@ -520,9 +520,9 @@ class SistemaSeguridad:
                 else:
                     inactivos += 1
         
-        info += f"  ✓ Activos: {activos}\n"
-        info += f"  ⊝ Inactivos: {inactivos}\n"
-        info += f"  🔴 Alertas: {alertas}\n"
+        info += f"  [+] Activos: {activos}\n"
+        info += f"  [-] Inactivos: {inactivos}\n"
+        info += f"  [!] Alertas: {alertas}\n"
         info += f"Eventos registrados: {len(self.eventos)}\n"
         
         return info
@@ -552,14 +552,14 @@ class SistemaSeguridad:
             with open(ARCHIVO_CONFIG, 'w', encoding='utf-8') as f:
                 json.dump(datos, f, indent=4, ensure_ascii=False)
             
-            return f"✓ Estado guardado en '{ARCHIVO_CONFIG}'."
+            return f"[OK] Estado guardado en '{ARCHIVO_CONFIG}'."
         except Exception as e:
-            return f"✗ Error al guardar: {str(e)}"
+            return f"[ERROR] Error al guardar: {str(e)}"
     
     def cargar_estado(self) -> str:
         """Carga el estado del sistema desde un archivo JSON."""
         if not os.path.exists(ARCHIVO_CONFIG):
-            return "✗ No se encontró archivo de configuración previo."
+            return "[ERROR] No se encontró archivo de configuración previo."
         
         try:
             with open(ARCHIVO_CONFIG, 'r', encoding='utf-8') as f:
@@ -573,9 +573,9 @@ class SistemaSeguridad:
             for hab_data in datos.get("habitaciones", []):
                 self.crear_habitacion(hab_data["nombre"], hab_data["piso"])
             
-            return f"✓ Estado cargado desde '{ARCHIVO_CONFIG}'."
+            return f"[OK] Estado cargado desde '{ARCHIVO_CONFIG}'."
         except Exception as e:
-            return f"✗ Error al cargar: {str(e)}"
+            return f"[ERROR] Error al cargar: {str(e)}"
 
 
 # ================================================================
@@ -585,7 +585,7 @@ class SistemaSeguridad:
 def mostrar_menu_principal() -> None:
     """Muestra el menú principal del sistema."""
     print(f"\n{SEPARADOR}")
-    print("🔐 SISTEMA DE SEGURIDAD - CASA INTELIGENTE")
+    print("[SECURITY SYSTEM] SISTEMA DE SEGURIDAD - CASA INTELIGENTE")
     print(f"{SEPARADOR}")
     print("\n1. Gestionar habitaciones y dispositivos")
     print("2. Cambiar estado de dispositivos")
@@ -603,7 +603,7 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
     """Menú para gestionar habitaciones y dispositivos."""
     while True:
         print(f"\n{SEPARADOR}")
-        print("📋 GESTIÓN DE HABITACIONES Y DISPOSITIVOS")
+        print("[MANAGEMENT] GESTIÓN DE HABITACIONES Y DISPOSITIVOS")
         print(f"{SEPARADOR}")
         print("1. Crear habitación")
         print("2. Listar habitaciones")
@@ -623,7 +623,7 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 piso = int(piso) if piso.isdigit() else 1
                 print(sistema.crear_habitacion(nombre, piso))
             else:
-                print("✗ El nombre no puede estar vacío.")
+                print("[ERROR] El nombre no puede estar vacío.")
         
         elif opcion == "2":
             print(sistema.listar_habitaciones())
@@ -635,11 +635,7 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 if confirmacion == 's':
                     print(sistema.eliminar_habitacion(nombre))
                 else:
-                    print("Operación cancelada.")
-        
-        elif opcion == "4":
-            print(sistema.listar_habitaciones())
-            habitacion = input("Nombre de la habitación: ").strip()
+                    print("[INFO] Operación cancelada.")
             
             if sistema.obtener_habitacion(habitacion):
                 print("\nTipos de dispositivos disponibles:")
@@ -669,14 +665,14 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                     elif tipo == "6":
                         dispositivo = AlarmaInteligente(nombre_disp, habitacion)
                     else:
-                        print("✗ Tipo de dispositivo inválido.")
+                        print("[ERROR] Tipo de dispositivo inválido.")
                     
                     if dispositivo:
                         print(sistema.agregar_dispositivo(habitacion, dispositivo))
                 else:
-                    print("✗ El nombre no puede estar vacío.")
+                    print("[ERROR] El nombre no puede estar vacío.")
             else:
-                print("✗ Habitación no encontrada.")
+                print("[ERROR] Habitación no encontrada.")
         
         elif opcion == "5":
             habitacion = input("Nombre de la habitación: ").strip()
@@ -687,7 +683,7 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 if nombre_disp:
                     print(sistema.eliminar_dispositivo(habitacion, nombre_disp))
             else:
-                print("✗ Habitación no encontrada.")
+                print("[ERROR] Habitación no encontrada.")
         
         elif opcion == "6":
             habitacion = input("Nombre de la habitación: ").strip()
@@ -695,13 +691,13 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
             if hab:
                 print(hab.listar_dispositivos())
             else:
-                print("✗ Habitación no encontrada.")
+                print("[ERROR] Habitación no encontrada.")
         
         elif opcion == "7":
             break
         
         else:
-            print("✗ Opción inválida.")
+            print("[ERROR] Opción inválida.")
 
 
 def menu_cambiar_estado(sistema: SistemaSeguridad) -> None:
@@ -711,7 +707,7 @@ def menu_cambiar_estado(sistema: SistemaSeguridad) -> None:
     
     hab = sistema.obtener_habitacion(habitacion)
     if not hab:
-        print("✗ Habitación no encontrada.")
+        print("[ERROR] Habitación no encontrada.")
         return
     
     print(hab.listar_dispositivos())
@@ -719,7 +715,7 @@ def menu_cambiar_estado(sistema: SistemaSeguridad) -> None:
     
     disp = hab.obtener_dispositivo(dispositivo)
     if not disp:
-        print("✗ Dispositivo no encontrado.")
+        print("[ERROR] Dispositivo no encontrado.")
         return
     
     print(f"\nDispositivo: {dispositivo} ({disp.tipo})")
@@ -744,7 +740,7 @@ def menu_cambiar_estado(sistema: SistemaSeguridad) -> None:
 def menu_escenas(sistema: SistemaSeguridad) -> None:
     """Menú para ejecutar escenas predefinidas."""
     print(f"\n{SEPARADOR}")
-    print("🎬 ESCENAS PREDEFINIDAS")
+    print("[SCENES] ESCENAS PREDEFINIDAS")
     print(f"{SEPARADOR}")
     
     escenas = sistema.escenas_predefinidas.keys()
@@ -762,13 +758,13 @@ def menu_escenas(sistema: SistemaSeguridad) -> None:
             escena_seleccionada = escenas_list[opcion - 1]
             print(sistema.ejecutar_escena(escena_seleccionada))
     except ValueError:
-        print("✗ Opción inválida.")
+        print("[ERROR] Opción inválida.")
 
 
 def menu_simular_eventos(sistema: SistemaSeguridad) -> None:
     """Menú para simular eventos de sensores."""
     print(f"\n{SEPARADOR}")
-    print("⚠ SIMULACIÓN DE EVENTOS DE SENSORES")
+    print("[SIMULATION] SIMULACIÓN DE EVENTOS DE SENSORES")
     print(f"{SEPARADOR}\n")
     
     eventos = sistema.simular_eventos_sensores()
@@ -785,7 +781,7 @@ def menu_reportes(sistema: SistemaSeguridad) -> None:
     """Menú para ver reportes y bitácora."""
     while True:
         print(f"\n{SEPARADOR}")
-        print("📊 REPORTES Y BITÁCORA")
+        print("[REPORTS] REPORTES Y BITÁCORA")
         print(f"{SEPARADOR}")
         print("1. Ver últimos 20 eventos")
         print("2. Ver últimos 50 eventos")
@@ -804,7 +800,7 @@ def menu_reportes(sistema: SistemaSeguridad) -> None:
         elif opcion == "4":
             break
         else:
-            print("✗ Opción inválida.")
+            print("[ERROR] Opción inválida.")
 
 
 # ================================================================
@@ -819,7 +815,7 @@ def main() -> None:
     
     # Intentar cargar estado previo
     print("\n" + SEPARADOR)
-    print("🔐 INICIANDO SISTEMA DE SEGURIDAD...")
+    print("[STARTUP] INICIANDO SISTEMA DE SEGURIDAD...")
     print(SEPARADOR)
     resultado_carga = sistema.cargar_estado()
     print(resultado_carga)
@@ -858,12 +854,12 @@ def main() -> None:
             if confirmacion == 's':
                 # Guardar antes de salir
                 print(sistema.guardar_estado())
-                print("\n✓ ¡Hasta luego! El sistema ha sido guardado correctamente.")
+                print("\n[OK] ¡Hasta luego! El sistema ha sido guardado correctamente.")
                 print(SEPARADOR + "\n")
                 break
         
         else:
-            print("✗ Opción inválida. Intente de nuevo.")
+            print("[ERROR] Opción inválida. Intente de nuevo.")
 
 
 if __name__ == "__main__":
