@@ -617,10 +617,16 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
         opcion = input("Seleccione una opción (1-7): ").strip()
         
         if opcion == "1":
-            nombre = input("Nombre de la habitación: ").strip()
+            nombre = input("Nombre de la habitación (o 'salir' para cancelar): ").strip()
+            if nombre.lower() == 'salir':
+                print("[INFO] Operación cancelada.")
+                continue
             if nombre:
-                piso = input("Número de piso (default=1): ").strip()
-                piso = int(piso) if piso.isdigit() else 1
+                piso_input = input("Número de piso (default=1, o 'salir' para cancelar): ").strip()
+                if piso_input.lower() == 'salir':
+                    print("[INFO] Operación cancelada.")
+                    continue
+                piso = int(piso_input) if piso_input.isdigit() else 1
                 print(sistema.crear_habitacion(nombre, piso))
             else:
                 print("[ERROR] El nombre no puede estar vacío.")
@@ -629,13 +635,23 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
             print(sistema.listar_habitaciones())
         
         elif opcion == "3":
-            nombre = input("Nombre de la habitación a eliminar: ").strip()
+            nombre = input("Nombre de la habitación a eliminar (o 'salir' para cancelar): ").strip()
+            if nombre.lower() == 'salir':
+                print("[INFO] Operación cancelada.")
+                continue
             if nombre:
                 confirmacion = input("¿Está seguro? (s/n): ").strip().lower()
                 if confirmacion == 's':
                     print(sistema.eliminar_habitacion(nombre))
                 else:
                     print("[INFO] Operación cancelada.")
+        
+        elif opcion == "4":
+            print(sistema.listar_habitaciones())
+            habitacion = input("Nombre de la habitación (o 'salir' para cancelar): ").strip()
+            if habitacion.lower() == 'salir':
+                print("[INFO] Operación cancelada.")
+                continue
             
             if sistema.obtener_habitacion(habitacion):
                 print("\nTipos de dispositivos disponibles:")
@@ -646,8 +662,15 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 print("5. Detector de Monóxido de Carbono")
                 print("6. Alarma Inteligente")
                 
-                tipo = input("\nSeleccione tipo de dispositivo (1-6): ").strip()
-                nombre_disp = input("Nombre del dispositivo: ").strip()
+                tipo = input("\nSeleccione tipo de dispositivo (1-6, o 'salir' para cancelar): ").strip()
+                if tipo.lower() == 'salir':
+                    print("[INFO] Operación cancelada.")
+                    continue
+                    
+                nombre_disp = input("Nombre del dispositivo (o 'salir' para cancelar): ").strip()
+                if nombre_disp.lower() == 'salir':
+                    print("[INFO] Operación cancelada.")
+                    continue
                 
                 if nombre_disp:
                     dispositivo = None
@@ -675,18 +698,28 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 print("[ERROR] Habitación no encontrada.")
         
         elif opcion == "5":
-            habitacion = input("Nombre de la habitación: ").strip()
+            habitacion = input("Nombre de la habitación (o 'salir' para cancelar): ").strip()
+            if habitacion.lower() == 'salir':
+                print("[INFO] Operación cancelada.")
+                continue
+                
             if sistema.obtener_habitacion(habitacion):
                 hab = sistema.obtener_habitacion(habitacion)
                 print(hab.listar_dispositivos())
-                nombre_disp = input("Nombre del dispositivo a eliminar: ").strip()
+                nombre_disp = input("Nombre del dispositivo a eliminar (o 'salir' para cancelar): ").strip()
+                if nombre_disp.lower() == 'salir':
+                    print("[INFO] Operación cancelada.")
+                    continue
                 if nombre_disp:
                     print(sistema.eliminar_dispositivo(habitacion, nombre_disp))
             else:
                 print("[ERROR] Habitación no encontrada.")
         
         elif opcion == "6":
-            habitacion = input("Nombre de la habitación: ").strip()
+            habitacion = input("Nombre de la habitación (o 'salir' para cancelar): ").strip()
+            if habitacion.lower() == 'salir':
+                print("[INFO] Operación cancelada.")
+                continue
             hab = sistema.obtener_habitacion(habitacion)
             if hab:
                 print(hab.listar_dispositivos())
@@ -702,79 +735,121 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
 
 def menu_cambiar_estado(sistema: SistemaSeguridad) -> None:
     """Menú para cambiar el estado de dispositivos."""
-    print(sistema.listar_habitaciones())
-    habitacion = input("Nombre de la habitación: ").strip()
-    
-    hab = sistema.obtener_habitacion(habitacion)
-    if not hab:
-        print("[ERROR] Habitación no encontrada.")
-        return
-    
-    print(hab.listar_dispositivos())
-    dispositivo = input("Nombre del dispositivo: ").strip()
-    
-    disp = hab.obtener_dispositivo(dispositivo)
-    if not disp:
-        print("[ERROR] Dispositivo no encontrado.")
-        return
-    
-    print(f"\nDispositivo: {dispositivo} ({disp.tipo})")
-    print("Estado actual: " + disp.estado)
-    
-    # Sugerir acciones según el tipo de dispositivo
-    if isinstance(disp, CerraduraInteligente):
-        print("\nAcciones disponibles: bloquear, desbloquear")
-    elif isinstance(disp, CamaraIP):
-        print("\nAcciones disponibles: activar, desactivar")
-    elif isinstance(disp, SensorPuertaVentana):
-        print("\nAcciones disponibles: abrir, cerrar")
-    elif isinstance(disp, AlarmaInteligente):
-        print("\nAcciones disponibles: activar, desactivar")
-    
-    accion = input("Ingrese la acción a ejecutar: ").strip()
-    
-    if accion:
-        print(sistema.cambiar_estado_dispositivo(habitacion, dispositivo, accion))
+    while True:
+        print(f"\n{SEPARADOR}")
+        print("[CONTROL] CAMBIAR ESTADO DE DISPOSITIVOS")
+        print(f"{SEPARADOR}")
+        print(sistema.listar_habitaciones())
+        
+        habitacion = input("Nombre de la habitación (o 'salir' para volver): ").strip()
+        
+        if habitacion.lower() == 'salir':
+            break
+        
+        hab = sistema.obtener_habitacion(habitacion)
+        if not hab:
+            print("[ERROR] Habitación no encontrada.")
+            continue
+        
+        print(hab.listar_dispositivos())
+        dispositivo = input("Nombre del dispositivo (o 'salir' para volver): ").strip()
+        
+        if dispositivo.lower() == 'salir':
+            continue
+        
+        disp = hab.obtener_dispositivo(dispositivo)
+        if not disp:
+            print("[ERROR] Dispositivo no encontrado.")
+            continue
+        
+        print(f"\nDispositivo: {dispositivo} ({disp.tipo})")
+        print("Estado actual: " + disp.estado)
+        
+        # Sugerir acciones según el tipo de dispositivo
+        print("\nAcciones disponibles:")
+        if isinstance(disp, CerraduraInteligente):
+            print("  • bloquear")
+            print("  • desbloquear")
+        elif isinstance(disp, CamaraIP):
+            print("  • activar")
+            print("  • desactivar")
+        elif isinstance(disp, SensorPuertaVentana):
+            print("  • abrir")
+            print("  • cerrar")
+        elif isinstance(disp, AlarmaInteligente):
+            print("  • activar")
+            print("  • desactivar")
+        
+        accion = input("\nIngrese la acción a ejecutar (o 'salir' para volver): ").strip()
+        
+        if accion.lower() == 'salir':
+            continue
+        
+        if accion:
+            print(sistema.cambiar_estado_dispositivo(habitacion, dispositivo, accion))
 
 
 def menu_escenas(sistema: SistemaSeguridad) -> None:
     """Menú para ejecutar escenas predefinidas."""
-    print(f"\n{SEPARADOR}")
-    print("[SCENES] ESCENAS PREDEFINIDAS")
-    print(f"{SEPARADOR}")
-    
-    escenas = sistema.escenas_predefinidas.keys()
-    for i, escena in enumerate(escenas, 1):
-        print(f"{i}. {escena}")
-    print(f"{len(escenas)+1}. Volver")
-    
-    opcion = input("\nSeleccione una escena: ").strip()
-    
-    try:
-        opcion = int(opcion)
+    while True:
+        print(f"\n{SEPARADOR}")
+        print("[SCENES] ESCENAS PREDEFINIDAS")
+        print(f"{SEPARADOR}")
+        
+        escenas = sistema.escenas_predefinidas.keys()
         escenas_list = list(escenas)
         
-        if 1 <= opcion <= len(escenas_list):
-            escena_seleccionada = escenas_list[opcion - 1]
-            print(sistema.ejecutar_escena(escena_seleccionada))
-    except ValueError:
-        print("[ERROR] Opción inválida.")
+        for i, escena in enumerate(escenas_list, 1):
+            print(f"{i}. {escena}")
+        print(f"{len(escenas_list)+1}. Volver al menú principal")
+        
+        opcion = input("\nSeleccione una opción (o 'salir' para cancelar): ").strip()
+        
+        if opcion.lower() == 'salir':
+            break
+        
+        try:
+            opcion_num = int(opcion)
+            
+            if opcion_num == len(escenas_list) + 1:
+                break
+            elif 1 <= opcion_num <= len(escenas_list):
+                escena_seleccionada = escenas_list[opcion_num - 1]
+                print(sistema.ejecutar_escena(escena_seleccionada))
+            else:
+                print("[ERROR] Opción inválida.")
+        except ValueError:
+            print("[ERROR] Por favor ingrese un número válido.")
 
 
 def menu_simular_eventos(sistema: SistemaSeguridad) -> None:
     """Menú para simular eventos de sensores."""
-    print(f"\n{SEPARADOR}")
-    print("[SIMULATION] SIMULACIÓN DE EVENTOS DE SENSORES")
-    print(f"{SEPARADOR}\n")
-    
-    eventos = sistema.simular_eventos_sensores()
-    
-    if eventos:
-        print("Eventos detectados:\n")
-        for evento in eventos:
-            print(f"  {evento}")
-    else:
-        print("No se detectaron eventos en esta simulación.")
+    while True:
+        print(f"\n{SEPARADOR}")
+        print("[SIMULATION] SIMULACIÓN DE EVENTOS DE SENSORES")
+        print(f"{SEPARADOR}")
+        print("1. Ejecutar simulación de sensores")
+        print("2. Volver al menú principal")
+        print(f"{SEPARADOR}\n")
+        
+        opcion = input("Seleccione una opción (o 'salir' para cancelar): ").strip()
+        
+        if opcion.lower() == 'salir':
+            break
+        
+        if opcion == "1":
+            eventos = sistema.simular_eventos_sensores()
+            print()
+            if eventos:
+                print("Eventos detectados:\n")
+                for evento in eventos:
+                    print(f"  {evento}")
+            else:
+                print("[INFO] No se detectaron eventos en esta simulación.")
+        elif opcion == "2":
+            break
+        else:
+            print("[ERROR] Opción inválida.")
 
 
 def menu_reportes(sistema: SistemaSeguridad) -> None:
@@ -789,7 +864,10 @@ def menu_reportes(sistema: SistemaSeguridad) -> None:
         print("4. Volver")
         print(f"{SEPARADOR}\n")
         
-        opcion = input("Seleccione una opción: ").strip()
+        opcion = input("Seleccione una opción (o 'salir' para cancelar): ").strip()
+        
+        if opcion.lower() == 'salir':
+            break
         
         if opcion == "1":
             print(sistema.obtener_bitacora(20))
@@ -823,9 +901,18 @@ def main() -> None:
     # Menú principal
     while True:
         mostrar_menu_principal()
-        opcion = input("Seleccione una opción (1-9): ").strip()
+        opcion = input("Seleccione una opción (1-9, o 'salir' para abandonar): ").strip()
         
-        if opcion == "1":
+        if opcion.lower() == 'salir':
+            confirmacion = input("\n¿Está seguro de que desea salir? (s/n): ").strip().lower()
+            if confirmacion == 's':
+                # Guardar antes de salir
+                print(sistema.guardar_estado())
+                print("\n[OK] ¡Hasta luego! El sistema ha sido guardado correctamente.")
+                print(SEPARADOR + "\n")
+                break
+        
+        elif opcion == "1":
             menu_gestionar_habitaciones(sistema)
         
         elif opcion == "2":
