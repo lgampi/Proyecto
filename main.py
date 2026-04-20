@@ -88,6 +88,15 @@ class CerraduraInteligente(DispositivoSeguridad):
         super().__init__(nombre, TIPO_CERRADURA, habitacion)
         self.estado = ESTADO_BLOQUEADO
         self.intentos_fallidos = 0
+        self.integridad_seguro = randint(50, 100)  # Porcentaje de integridad del seguro
+    
+    def obtener_informacion(self) -> Dict[str, Any]:
+        """Retorna la información del dispositivo con atributos significativos."""
+        self.integridad_seguro = randint(50, 100)  # Cambia aleatoriamente al consultar
+        info = super().obtener_informacion()
+        info["integridad_seguro"] = self.integridad_seguro
+        info["intentos_fallidos"] = self.intentos_fallidos
+        return info
     
     def bloquear(self) -> str:
         """Bloquea la cerradura."""
@@ -109,6 +118,16 @@ class CamaraIP(DispositivoSeguridad):
         self.estado = ESTADO_ACTIVO
         self.movimiento_detectado = False
         self.resolucion = "1080p"
+        self.nivel_movimiento = randint(0, 100)  # Porcentaje de intensidad de movimiento detectado
+    
+    def obtener_informacion(self) -> Dict[str, Any]:
+        """Retorna la información del dispositivo con atributos significativos."""
+        self.nivel_movimiento = randint(0, 100)  # Cambia aleatoriamente al consultar
+        info = super().obtener_informacion()
+        info["nivel_movimiento"] = self.nivel_movimiento
+        info["resolucion"] = self.resolucion
+        info["movimiento_detectado"] = self.movimiento_detectado
+        return info
     
     def activar(self) -> str:
         """Activa la cámara."""
@@ -137,6 +156,14 @@ class SensorPuertaVentana(DispositivoSeguridad):
     def __init__(self, nombre: str, habitacion: str):
         super().__init__(nombre, TIPO_SENSOR_PUERTA, habitacion)
         self.estado = ESTADO_CERRADO
+        self.tiempo_abierto_segundos = randint(0, 3600)  # Segundos que ha estado abierto
+    
+    def obtener_informacion(self) -> Dict[str, Any]:
+        """Retorna la información del dispositivo con atributos significativos."""
+        self.tiempo_abierto_segundos = randint(0, 3600)  # Cambia aleatoriamente al consultar
+        info = super().obtener_informacion()
+        info["tiempo_abierto_segundos"] = self.tiempo_abierto_segundos
+        return info
     
     def abrir(self) -> str:
         """Simula apertura de puerta/ventana."""
@@ -155,6 +182,14 @@ class DetectorHumo(DispositivoSeguridad):
     def __init__(self, nombre: str, habitacion: str):
         super().__init__(nombre, TIPO_DETECTOR_HUMO, habitacion)
         self.estado = ESTADO_ACTIVO
+        self.magnitud_humo = randint(0, 100)  # Porcentaje de magnitud del humo detectado
+    
+    def obtener_informacion(self) -> Dict[str, Any]:
+        """Retorna la información del dispositivo con atributos significativos."""
+        self.magnitud_humo = randint(0, 100)  # Cambia aleatoriamente al consultar
+        info = super().obtener_informacion()
+        info["magnitud_humo"] = self.magnitud_humo
+        return info
     
     def simular_deteccion_humo(self) -> Optional[str]:
         """Simula detección de humo de forma aleatoria."""
@@ -176,6 +211,14 @@ class DetectorMonoxidoCarbono(DispositivoSeguridad):
     def __init__(self, nombre: str, habitacion: str):
         super().__init__(nombre, TIPO_DETECTOR_CO, habitacion)
         self.estado = ESTADO_ACTIVO
+        self.nivel_co = randint(0, 100)  # Porcentaje de nivel de CO detectado
+    
+    def obtener_informacion(self) -> Dict[str, Any]:
+        """Retorna la información del dispositivo con atributos significativos."""
+        self.nivel_co = randint(0, 100)  # Cambia aleatoriamente al consultar
+        info = super().obtener_informacion()
+        info["nivel_co"] = self.nivel_co
+        return info
     
     def simular_deteccion_co(self) -> Optional[str]:
         """Simula detección de CO de forma aleatoria."""
@@ -198,6 +241,15 @@ class AlarmaInteligente(DispositivoSeguridad):
         super().__init__(nombre, TIPO_ALARMA, habitacion)
         self.estado = ESTADO_ACTIVO
         self.volumen = 50
+        self.sensibilidad = randint(20, 100)  # Porcentaje de sensibilidad de detección
+    
+    def obtener_informacion(self) -> Dict[str, Any]:
+        """Retorna la información del dispositivo con atributos significativos."""
+        self.sensibilidad = randint(20, 100)  # Cambia aleatoriamente al consultar
+        info = super().obtener_informacion()
+        info["volumen"] = self.volumen
+        info["sensibilidad"] = self.sensibilidad
+        return info
     
     def activar(self) -> str:
         """Activa la alarma."""
@@ -268,6 +320,21 @@ class Habitacion:
             info_disp = dispositivo.obtener_informacion()
             info += f"    • {info_disp['nombre']} ({info_disp['tipo']})\n"
             info += f"      Estado: {info_disp['estado']} | Batería: {info_disp['bateria']}%\n"
+            
+            # Mostrar atributos específicos según el tipo de dispositivo
+            if 'magnitud_humo' in info_disp:
+                info += f"      Magnitud de Humo: {info_disp['magnitud_humo']}%\n"
+            if 'nivel_co' in info_disp:
+                info += f"      Nivel de CO: {info_disp['nivel_co']}%\n"
+            if 'nivel_movimiento' in info_disp:
+                info += f"      Nivel de Movimiento: {info_disp['nivel_movimiento']}%\n"
+            if 'integridad_seguro' in info_disp:
+                info += f"      Integridad del Seguro: {info_disp['integridad_seguro']}%\n"
+            if 'sensibilidad' in info_disp:
+                info += f"      Sensibilidad: {info_disp['sensibilidad']}%\n"
+            if 'tiempo_abierto_segundos' in info_disp:
+                info += f"      Tiempo Abierto: {info_disp['tiempo_abierto_segundos']}s\n"
+        
         return info
 
 
@@ -750,11 +817,33 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 print("[ERROR] Dispositivo no encontrado.")
                 continue
             
-            print(f"\nDispositivo: {dispositivo} ({disp.tipo})")
-            print("Estado actual: " + disp.estado)
+            # Obtener información del dispositivo (esto también actualiza valores aleatorios)
+            info_disp = disp.obtener_informacion()
+            
+            print(f"\n{SEPARADOR}")
+            print(f"Dispositivo: {dispositivo} ({disp.tipo})")
+            print(f"Estado actual: {disp.estado}")
+            print(f"Batería: {disp.bateria}%")
+            
+            # Mostrar atributos específicos según el tipo de dispositivo
+            if 'magnitud_humo' in info_disp:
+                print(f"Magnitud de Humo: {info_disp['magnitud_humo']}%")
+            if 'nivel_co' in info_disp:
+                print(f"Nivel de CO: {info_disp['nivel_co']}%")
+            if 'nivel_movimiento' in info_disp:
+                print(f"Nivel de Movimiento: {info_disp['nivel_movimiento']}%")
+            if 'integridad_seguro' in info_disp:
+                print(f"Integridad del Seguro: {info_disp['integridad_seguro']}%")
+            if 'sensibilidad' in info_disp:
+                print(f"Sensibilidad: {info_disp['sensibilidad']}%")
+            if 'tiempo_abierto_segundos' in info_disp:
+                print(f"Tiempo Abierto: {info_disp['tiempo_abierto_segundos']}s")
+            if 'intentos_fallidos' in info_disp:
+                print(f"Intentos Fallidos: {info_disp['intentos_fallidos']}")
             
             # Sugerir acciones según el tipo de dispositivo
-            print("\nAcciones disponibles:")
+            print(f"\n{SEPARADOR}")
+            print("Acciones disponibles:")
             if isinstance(disp, CerraduraInteligente):
                 print("  • bloquear")
                 print("  • desbloquear")
@@ -768,7 +857,7 @@ def menu_gestionar_habitaciones(sistema: SistemaSeguridad) -> None:
                 print("  • activar")
                 print("  • desactivar")
             
-            accion = input("\nIngrese la acción a ejecutar (o 'salir' para cancelar): ").strip()
+            accion = input(f"{SEPARADOR}\nIngrese la acción a ejecutar (o 'salir' para cancelar): ").strip()
             
             if accion.lower() == 'salir':
                 continue

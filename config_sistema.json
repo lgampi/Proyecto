@@ -1,0 +1,127 @@
+{
+    "timestamp": "2026-04-19 21:19:50",
+    "habitaciones": [
+        {
+            "nombre": "sala",
+            "piso": 1,
+            "dispositivos": [
+                {
+                    "nombre": "sensorPuertaVentana1",
+                    "tipo": "Sensor Puerta/Ventana",
+                    "habitacion": "sala",
+                    "estado": "Cerrado",
+                    "bateria": 100,
+                    "ultima_actividad": "2026-04-19 21:17:57",
+                    "tiempo_abierto_segundos": 3324
+                },
+                {
+                    "nombre": "cer1",
+                    "tipo": "Cerradura Inteligente",
+                    "habitacion": "sala",
+                    "estado": "Desbloqueado",
+                    "bateria": 100,
+                    "ultima_actividad": "2026-04-19 21:18:19",
+                    "integridad_seguro": 58,
+                    "intentos_fallidos": 0
+                },
+                {
+                    "nombre": "cam1",
+                    "tipo": "Cámara IP",
+                    "habitacion": "sala",
+                    "estado": "Inactivo",
+                    "bateria": 100,
+                    "ultima_actividad": "2026-04-19 21:18:36",
+                    "nivel_movimiento": 66,
+                    "resolucion": "1080p",
+                    "movimiento_detectado": false
+                },
+                {
+                    "nombre": "humo1",
+                    "tipo": "Detector de Humo",
+                    "habitacion": "sala",
+                    "estado": "Activo",
+                    "bateria": 100,
+                    "ultima_actividad": "2026-04-19 21:16:01",
+                    "magnitud_humo": 94
+                },
+                {
+                    "nombre": "monoxido1",
+                    "tipo": "Detector de Monóxido de Carbono",
+                    "habitacion": "sala",
+                    "estado": "Activo",
+                    "bateria": 100,
+                    "ultima_actividad": "2026-04-19 21:16:30",
+                    "nivel_co": 53
+                },
+                {
+                    "nombre": "alarma1",
+                    "tipo": "Alarma Inteligente",
+                    "habitacion": "sala",
+                    "estado": "Activo",
+                    "bateria": 100,
+                    "ultima_actividad": "2026-04-19 21:19:40",
+                    "volumen": 50,
+                    "sensibilidad": 76
+                }
+            ]
+        }
+    ],
+    "eventos": [
+        {
+            "timestamp": "2026-04-19 21:03:13",
+            "descripcion": "Habitación 'sala' creada"
+        },
+        {
+            "timestamp": "2026-04-19 21:03:34",
+            "descripcion": "Habitación 'sala' eliminada"
+        },
+        {
+            "timestamp": "2026-04-19 21:14:17",
+            "descripcion": "Habitación 'sala' creada"
+        },
+        {
+            "timestamp": "2026-04-19 21:14:36",
+            "descripcion": "Dispositivo 'sensorPuertaVentana1' agregado a 'sala'"
+        },
+        {
+            "timestamp": "2026-04-19 21:15:21",
+            "descripcion": "Dispositivo 'cer1' agregado a 'sala'"
+        },
+        {
+            "timestamp": "2026-04-19 21:15:50",
+            "descripcion": "Dispositivo 'cam1' agregado a 'sala'"
+        },
+        {
+            "timestamp": "2026-04-19 21:16:01",
+            "descripcion": "Dispositivo 'humo1' agregado a 'sala'"
+        },
+        {
+            "timestamp": "2026-04-19 21:16:30",
+            "descripcion": "Dispositivo 'monoxido1' agregado a 'sala'"
+        },
+        {
+            "timestamp": "2026-04-19 21:17:10",
+            "descripcion": "Dispositivo 'alarma1' agregado a 'sala'"
+        },
+        {
+            "timestamp": "2026-04-19 21:17:57",
+            "descripcion": "Acción 'cerrar' en 'sensorPuertaVentana1'"
+        },
+        {
+            "timestamp": "2026-04-19 21:18:19",
+            "descripcion": "Acción 'desbloquear' en 'cer1'"
+        },
+        {
+            "timestamp": "2026-04-19 21:18:36",
+            "descripcion": "Acción 'desactivar' en 'cam1'"
+        },
+        {
+            "timestamp": "2026-04-19 21:19:35",
+            "descripcion": "Acción 'desactivar' en 'alarma1'"
+        },
+        {
+            "timestamp": "2026-04-19 21:19:40",
+            "descripcion": "Acción 'activar' en 'alarma1'"
+        }
+    ]
+}
