@@ -521,7 +521,7 @@ class SistemaSeguridad:
                     elif accion == "desactivar":
                         resultado += f"  • {dispositivo.desactivar()}\n"
         
-        return resultado if resultado else f"  (No hay dispositivos del tipo '{tipo}')\n"
+        return resultado
     
     def simular_eventos_sensores(self) -> List[str]:
         """Simula eventos de los sensores de forma aleatoria."""
@@ -638,11 +638,63 @@ class SistemaSeguridad:
             
             # Reconstruir habitaciones y dispositivos
             for hab_data in datos.get("habitaciones", []):
+                # Crear la habitación
                 self.crear_habitacion(hab_data["nombre"], hab_data["piso"])
+                habitacion = self.obtener_habitacion(hab_data["nombre"])
+                
+                # Reconstruir dispositivos en la habitación
+                for disp_data in hab_data.get("dispositivos", []):
+                    dispositivo = self._reconstruir_dispositivo_desde_json(disp_data)
+                    if dispositivo:
+                        habitacion.agregar_dispositivo(dispositivo)
             
             return f"[OK] Estado cargado desde '{ARCHIVO_CONFIG}'."
         except Exception as e:
             return f"[ERROR] Error al cargar: {str(e)}"
+    
+    def _reconstruir_dispositivo_desde_json(self, disp_data: Dict[str, Any]) -> Optional[DispositivoSeguridad]:
+        """Reconstruye un dispositivo desde datos JSON."""
+        tipo = disp_data.get("tipo")
+        nombre = disp_data.get("nombre")
+        habitacion = disp_data.get("habitacion")
+        
+        dispositivo = None
+        
+        if tipo == TIPO_CERRADURA:
+            dispositivo = CerraduraInteligente(nombre, habitacion)
+            dispositivo.intentos_fallidos = disp_data.get("intentos_fallidos", 0)
+            dispositivo.integridad_seguro = disp_data.get("integridad_seguro", 100)
+        
+        elif tipo == TIPO_CAMARA:
+            dispositivo = CamaraIP(nombre, habitacion)
+            dispositivo.resolucion = disp_data.get("resolucion", "1080p")
+            dispositivo.movimiento_detectado = disp_data.get("movimiento_detectado", False)
+            dispositivo.nivel_movimiento = disp_data.get("nivel_movimiento", 0)
+        
+        elif tipo == TIPO_SENSOR_PUERTA:
+            dispositivo = SensorPuertaVentana(nombre, habitacion)
+            dispositivo.tiempo_abierto_segundos = disp_data.get("tiempo_abierto_segundos", 0)
+        
+        elif tipo == TIPO_DETECTOR_HUMO:
+            dispositivo = DetectorHumo(nombre, habitacion)
+            dispositivo.magnitud_humo = disp_data.get("magnitud_humo", 0)
+        
+        elif tipo == TIPO_DETECTOR_CO:
+            dispositivo = DetectorMonoxidoCarbono(nombre, habitacion)
+            dispositivo.nivel_co = disp_data.get("nivel_co", 0)
+        
+        elif tipo == TIPO_ALARMA:
+            dispositivo = AlarmaInteligente(nombre, habitacion)
+            dispositivo.volumen = disp_data.get("volumen", 50)
+            dispositivo.sensibilidad = disp_data.get("sensibilidad", 50)
+        
+        # Restaurar atributos comunes
+        if dispositivo:
+            dispositivo.estado = disp_data.get("estado", ESTADO_INACTIVO)
+            dispositivo.bateria = disp_data.get("bateria", 100)
+            dispositivo.ultima_actividad = disp_data.get("ultima_actividad", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        
+        return dispositivo
 
 
 # ================================================================
@@ -660,8 +712,7 @@ def mostrar_menu_principal() -> None:
     print("4. Ver reportes y bitácora")
     print("5. Ver estado general del sistema")
     print("6. Guardar estado del sistema")
-    print("7. Cargar estado del sistema")
-    print("8. Salir")
+    print("7. Salir")
     print(f"{SEPARADOR}\n")
 
 
@@ -941,10 +992,8 @@ def menu_reportes(sistema: SistemaSeguridad) -> None:
         print(f"\n{SEPARADOR}")
         print("[REPORTS] REPORTES Y BITÁCORA")
         print(f"{SEPARADOR}")
-        print("1. Ver últimos 20 eventos")
-        print("2. Ver últimos 50 eventos")
-        print("3. Ver todos los eventos")
-        print("4. Volver")
+        print("1. Ver todos los eventos")
+        print("2. Volver")
         print(f"{SEPARADOR}\n")
         
         opcion = input("Seleccione una opción (o 'salir' para cancelar): ").strip()
@@ -953,12 +1002,8 @@ def menu_reportes(sistema: SistemaSeguridad) -> None:
             break
         
         if opcion == "1":
-            print(sistema.obtener_bitacora(20))
-        elif opcion == "2":
-            print(sistema.obtener_bitacora(50))
-        elif opcion == "3":
             print(sistema.obtener_bitacora(len(sistema.eventos)))
-        elif opcion == "4":
+        elif opcion == "2":
             break
         else:
             print("[ERROR] Opción inválida.")
@@ -984,7 +1029,7 @@ def main() -> None:
     # Menú principal
     while True:
         mostrar_menu_principal()
-        opcion = input("Seleccione una opción (1-8, o 'salir' para abandonar): ").strip()
+        opcion = input("Seleccione una opción (1-7, o 'salir' para abandonar): ").strip()
         
         if opcion.lower() == 'salir':
             confirmacion = input("\n¿Está seguro de que desea salir? (s/n): ").strip().lower()
@@ -1014,9 +1059,6 @@ def main() -> None:
             print(sistema.guardar_estado())
         
         elif opcion == "7":
-            print(sistema.cargar_estado())
-        
-        elif opcion == "8":
             confirmacion = input("\n¿Está seguro de que desea salir? (s/n): ").strip().lower()
             if confirmacion == 's':
                 # Guardar antes de salir

@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-04-19 21:19:50",
+    "timestamp": "2026-04-19 21:25:12",
     "habitaciones": [
         {
             "nombre": "sala",
@@ -12,7 +12,7 @@
                     "estado": "Cerrado",
                     "bateria": 100,
                     "ultima_actividad": "2026-04-19 21:17:57",
-                    "tiempo_abierto_segundos": 3324
+                    "tiempo_abierto_segundos": 3161
                 },
                 {
                     "nombre": "cer1",
@@ -21,7 +21,7 @@
                     "estado": "Desbloqueado",
                     "bateria": 100,
                     "ultima_actividad": "2026-04-19 21:18:19",
-                    "integridad_seguro": 58,
+                    "integridad_seguro": 80,
                     "intentos_fallidos": 0
                 },
                 {
@@ -31,7 +31,7 @@
                     "estado": "Inactivo",
                     "bateria": 100,
                     "ultima_actividad": "2026-04-19 21:18:36",
-                    "nivel_movimiento": 66,
+                    "nivel_movimiento": 27,
                     "resolucion": "1080p",
                     "movimiento_detectado": false
                 },
@@ -42,7 +42,7 @@
                     "estado": "Activo",
                     "bateria": 100,
                     "ultima_actividad": "2026-04-19 21:16:01",
-                    "magnitud_humo": 94
+                    "magnitud_humo": 55
                 },
                 {
                     "nombre": "monoxido1",
@@ -51,17 +51,17 @@
                     "estado": "Activo",
                     "bateria": 100,
                     "ultima_actividad": "2026-04-19 21:16:30",
-                    "nivel_co": 53
+                    "nivel_co": 17
                 },
                 {
                     "nombre": "alarma1",
                     "tipo": "Alarma Inteligente",
                     "habitacion": "sala",
-                    "estado": "Activo",
+                    "estado": "Inactivo",
                     "bateria": 100,
-                    "ultima_actividad": "2026-04-19 21:19:40",
+                    "ultima_actividad": "2026-04-19 21:25:03",
                     "volumen": 50,
-                    "sensibilidad": 76
+                    "sensibilidad": 58
                 }
             ]
         }
@@ -122,6 +122,14 @@
         {
             "timestamp": "2026-04-19 21:19:40",
             "descripcion": "Acción 'activar' en 'alarma1'"
+        },
+        {
+            "timestamp": "2026-04-19 21:24:41",
+            "descripcion": "Habitación 'sala' creada"
+        },
+        {
+            "timestamp": "2026-04-19 21:25:03",
+            "descripcion": "Acción 'desactivar' en 'alarma1'"
         }
     ]
 }
